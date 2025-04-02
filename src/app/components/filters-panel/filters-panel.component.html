@@ -1,0 +1,59 @@
+<div class="d-flex p-3 gap-4 flex-wrap">
+  <div class="d-flex flex-column align-items-center gap-2">
+    <label class="form-label mb-0">Дата видачі кредиту</label>
+    <div class="d-flex gap-2">
+      <input
+        type="date"
+        class="form-control"
+        style="width: 150px"
+        placeholder="Від"
+        [value]="issueDateFrom"
+        (change)="onIssueDateFromChange($event)"
+      />
+      <input
+        type="date"
+        class="form-control"
+        style="width: 150px"
+        placeholder="До"
+        [value]="issueDateTo"
+        (change)="onIssueDateToChange($event)"
+      />
+    </div>
+  </div>
+
+  <div class="d-flex flex-column align-items-center gap-2">
+    <label class="form-label mb-0">Дата фактичного повернення кредиту</label>
+    <div class="d-flex gap-2">
+      <input
+        type="date"
+        class="form-control"
+        style="width: 150px"
+        placeholder="Від"
+        [value]="returnDateFrom"
+        (change)="onReturnDateFromChange($event)"
+      />
+      <input
+        type="date"
+        class="form-control"
+        style="width: 150px"
+        placeholder="До"
+        [value]="returnDateTo"
+        (change)="onReturnDateToChange($event)"
+      />
+    </div>
+  </div>
+
+  <div class="d-flex align-items-center gap-2">
+    <label class="form-label mb-0">Прострочені кредити</label>
+    <div class="form-check form-switch">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        role="switch"
+        id="overdueLoanRange"
+        [checked]="overdueOnly"
+        (change)="onOverdueLoansToggle($event)"
+      />
+    </div>
+  </div>
+</div>

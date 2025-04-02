@@ -1,0 +1,111 @@
+<ul class="nav nav-tabs mt-3" id="metricsTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      [class.active]="selectedTab().tab === 'total-loans'"
+      id="total-loans-tab"
+      type="button"
+      (click)="setActiveTab('total-loans')"
+    >
+      <i class="fas fa-chart-bar"></i> Загальна кількість кредитів
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      [class.active]="selectedTab().tab === 'average-amount'"
+      id="average-amount-tab"
+      type="button"
+      (click)="setActiveTab('average-amount')"
+    >
+      <i class="fas fa-dollar-sign"></i> Середня сума видачі
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      [class.active]="selectedTab().tab === 'total-amount'"
+      id="total-amount-tab"
+      type="button"
+      (click)="setActiveTab('total-amount')"
+    >
+      <i class="fas fa-money-bill-wave"></i> Загальна сума видачі
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      [class.active]="selectedTab().tab === 'total-percent'"
+      id="total-percent-tab"
+      type="button"
+      (click)="setActiveTab('total-percent')"
+    >
+      <i class="fas fa-percentage"></i> Загальна сума відсотків
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      [class.active]="selectedTab().tab === 'returned-loans'"
+      id="returned-loans-tab"
+      type="button"
+      (click)="setActiveTab('returned-loans')"
+    >
+      <i class="fas fa-check-circle"></i> Повернені кредити
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      [class.active]="selectedTab().tab === 'top'"
+      id="returned-loans-tab"
+      type="button"
+      (click)="setActiveTab('top')"
+    >
+      <i class="fas fa-check-circle"></i> Топ-10
+    </button>
+  </li>
+</ul>
+<div class="container">
+  @if(isLoading() && selectedTab().tab !== 'top'){
+  <div class="metrics-content">
+    <div class="mt-3 p-2">
+      <app-shared-table
+        [tableData]="monthlyStats"
+        [tableHeaders]="selectedTab().tableHeaders"
+      />
+    </div>
+  </div>
+  } @else if(isLoading() && selectedTab().tab === 'top'){
+  <div class="mb-3">
+    <h3 class="mb-2">
+      Топ-10 користувачів з найбільшим співвідношенням суми сплачених відсотків
+      до суми виданих кредитів для повернених кредитів.
+    </h3>
+    <app-shared-table
+      [tableData]="topUsersByRatio()"
+      [tableHeaders]="headers.ratio"
+    />
+  </div>
+  <div class="mb-3">
+    <h3 class="mb-2">Топ-10 користувачів за сумою сплачених відсотків</h3>
+    <app-shared-table
+      [tableData]="topUsersByInterest()"
+      [tableHeaders]="headers.interest"
+    />
+  </div>
+  <div class="mb-3">
+    <h3 class="mb-2">Топ-10 користувачів за кількістю отриманих кредитів</h3>
+    <app-shared-table
+      [tableData]="topUsersByLoan()"
+      [tableHeaders]="headers.loans"
+    />
+  </div>
+  } @else{
+  <div class="text-center p-3">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Загрузка...</span>
+    </div>
+  </div>
+  }
+</div>

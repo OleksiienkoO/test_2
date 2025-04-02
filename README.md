@@ -1,59 +1,19 @@
-# Test2
+HeaderComponent: створює панель навігації за двома посиляннями : “Загальна таблиця” та “Коротка інформація”.
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.4.
+MainTablePageComponent: відображає сторінку яка включає загальну таблицю з данними по кредитам.
 
-## Development server
+SharedTableComponent: відображає загальну таблицю, реалізує пагінацію.
 
-To start a local development server, run:
+ShortInformationPageComponent: відображає панель що містить наступні метрики: Загальна кількість кредитів, Середня сума видачі, Загальна сума видачі, Загальна сума відсотків, Повернені кредити, Топ-10
 
-```bash
-ng serve
-```
+FiltersPanelComponent: фільтрує данні по датам видачі кредиті, датам фактичного повернення кредиту та відображає прострочені кредити.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Для сторінки “Загальна таблиця” створено таблицю з можливістю фільтрувати данні за датою видачі кредиту, за датою фактичного повернення та за простроченими кредитами. Реалізована пагінація з можливістю обмеження відображення кредитних данних на сторінці.
 
-## Code scaffolding
+Для сторінки “Коротка інформація” створено панель що відображає данні по місяцям за Загальною кількістю кредитів, Середньою сумою видачі, Загальною сумою видачі, Загальною сумою відсотків, Поверненених кредитів, Топ-10 збірна з додаткових метрик
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Топ-10 відображає:
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Топ-10 користувачів за кількістю отриманих кредитів
+- Топ-10 користувачів за сумою сплачених відсотків для повернених кредитів
+- Топ-10 користувачів з найбільшим співвідношенням суми сплачених відсотків до суми виданих кредитів для повернених кредитів.

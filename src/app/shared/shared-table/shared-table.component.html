@@ -1,0 +1,45 @@
+<div class="table-responsive">
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        @for(header of tableHeaders();track header.key){
+        <th class="text-center">{{ header.label }}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for(item of tableData() | paginate: { itemsPerPage: itemsPerPage,
+      currentPage: currentPage, id: 'tableData' };track
+      item[tableHeaders()[0].key]){
+      <tr>
+        @for(header of tableHeaders();track header.key){ @if(typeof
+        item[header.key]==='number'){
+        <td class="text-center">{{ formatNumber(item[header.key]) }}</td>
+        }@else{
+        <td class="text-center">{{ item[header.key] }}</td>
+        } }
+      </tr>
+      }
+    </tbody>
+  </table>
+
+  <div class="d-flex justify-content-between align-items-center p-1">
+    <input
+      type="text"
+      [(ngModel)]="itemsPerPage"
+      class="form-control"
+      style="width: 50px"
+      placeholder="Items per page"
+    />
+    <pagination-controls
+      id="tableData"
+      (pageChange)="currentPage = $event"
+      previousLabel="Previous"
+      nextLabel="Next"
+      screenReaderPaginationLabel="Пагинация"
+      screenReaderPageLabel="Next"
+      screenReaderCurrentLabel="Previous"
+    >
+    </pagination-controls>
+  </div>
+</div>
