@@ -1,4 +1,11 @@
-import { Component, computed, DestroyRef, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { SharedTableComponent } from '../../shared/shared-table/shared-table.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { headers } from './main-table-page.headders';
@@ -10,6 +17,7 @@ import { FiltersPanelComponent } from '../../components/filters-panel/filters-pa
   imports: [SharedTableComponent, FiltersPanelComponent],
   templateUrl: './main-table-page.component.html',
   styleUrl: './main-table-page.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainTablePageComponent implements OnInit {
   tableData = computed(() => this.dataService.filteredClients());
@@ -23,7 +31,7 @@ export class MainTablePageComponent implements OnInit {
     this.getTableData();
   }
 
-  getTableData() {
+  getTableData(): void {
     this.dataService
       .getAllClientsData()
       .pipe(takeUntilDestroyed(this.destroyRef))

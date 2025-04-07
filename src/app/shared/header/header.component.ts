@@ -1,5 +1,10 @@
 import { NgClass } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -7,15 +12,16 @@ import { Router } from '@angular/router';
   imports: [NgClass],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
   private readonly router = inject(Router);
 
-  isActiveRoute(route: string) {
+  isActiveRoute(route: string): boolean {
     return this.router.url === route;
   }
 
-  navigateToPage(route: string) {
+  navigateToPage(route: string): void {
     this.router.navigate([route]);
   }
 }

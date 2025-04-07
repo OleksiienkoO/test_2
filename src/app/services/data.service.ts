@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpService } from './http-service.service';
-import { catchError, finalize, tap } from 'rxjs';
+import { catchError, finalize, Observable, tap } from 'rxjs';
 import { ClientData } from '../models/clients.model';
 import { ClientFilters } from '../models/filters.model';
 
@@ -13,7 +13,7 @@ export class DataService {
   clientsData = signal<ClientData[]>([]);
   private filters = signal<ClientFilters>({});
 
-  getAllClientsData() {
+  getAllClientsData(): Observable<ClientData[]> {
     this.isDataLoaded.set(false);
     return this.httpService.getAllTableData().pipe(
       tap((response) => {
@@ -27,71 +27,83 @@ export class DataService {
     );
   }
 
+  private filterByIssueDate(
+    clients: ClientData[],
+    filters: ClientFilters
+  ): ClientData[] {
+    if (!filters.issueDateFrom && !filters.issueDateTo) {
+      return clients;
+    }
+
+    return clients.filter((client) => {
+      const clientDate = new Date(client.issuance_date);
+
+      if (filters.issueDateFrom && clientDate < filters.issueDateFrom) {
+        return false;
+      }
+
+      if (filters.issueDateTo && clientDate > new Date(filters.issueDateTo)) {
+        return false;
+      }
+
+      return true;
+    });
+  }
+
+  private filterByReturnDate(
+    clients: ClientData[],
+    filters: ClientFilters
+  ): ClientData[] {
+    if (!filters.returnDateFrom && !filters.returnDateTo) {
+      return clients;
+    }
+
+    return clients.filter((client) => {
+      if (client.actual_return_date === null) {
+        return false;
+      }
+
+      const clientDate = new Date(client.actual_return_date);
+
+      if (filters.returnDateFrom && clientDate < filters.returnDateFrom) {
+        return false;
+      }
+
+      if (filters.returnDateTo && clientDate > new Date(filters.returnDateTo)) {
+        return false;
+      }
+
+      return true;
+    });
+  }
+
+  private filterOverdueLoans(
+    clients: ClientData[],
+    filters: ClientFilters
+  ): ClientData[] {
+    if (!filters.overdueOnly) {
+      return clients;
+    }
+
+    return clients.filter((client) => this.isOverdueLoan(client));
+  }
+
   filteredClients = computed(() => {
     let clients = this.clientsData();
     const currentFilters = this.filters();
 
-    if (currentFilters.issueDateFrom || currentFilters.issueDateTo) {
-      clients = clients.filter((client) => {
-        const clientDate = new Date(client.issuance_date);
-
-        if (
-          currentFilters.issueDateFrom &&
-          clientDate < currentFilters.issueDateFrom
-        ) {
-          return false;
-        }
-
-        if (currentFilters.issueDateTo) {
-          const toDate = new Date(currentFilters.issueDateTo);
-
-          if (clientDate > toDate) {
-            return false;
-          }
-        }
-
-        return true;
-      });
-    }
-
-    if (currentFilters.returnDateFrom || currentFilters.returnDateTo) {
-      clients = clients.filter((client) => {
-        if (client.actual_return_date === null) {
-          return false;
-        }
-
-        const clientDate = new Date(client.actual_return_date);
-
-        if (
-          currentFilters.returnDateFrom &&
-          clientDate < currentFilters.returnDateFrom
-        ) {
-          return false;
-        }
-
-        if (currentFilters.returnDateTo) {
-          const toDate = new Date(currentFilters.returnDateTo);
-
-          if (clientDate > toDate) {
-            return false;
-          }
-        }
-
-        return true;
-      });
-    }
-
-    if (currentFilters.overdueOnly) {
-      clients = clients.filter((client) => this.isOverdueLoan(client));
-    }
+    clients = this.filterByIssueDate(clients, currentFilters);
+    clients = this.filterByReturnDate(clients, currentFilters);
+    clients = this.filterOverdueLoans(clients, currentFilters);
 
     return clients;
   });
-  updateFilters(newFilters: ClientFilters) {
-    this.filters.set({
-      ...this.filters(),
+
+  updateFilters(newFilters: ClientFilters): void {
+    this.filters.update((filters) => ({
+      ...filters,
       ...newFilters,
-    });
+    }));
   }
 
   private isOverdueLoan(client: ClientData): boolean {

@@ -1,74 +1,74 @@
-import { Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { DataService } from '../../services/data.service';
 import { ClientFilters } from '../../models/filters.model';
 import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-filters-panel',
   imports: [NgbDatepickerModule, ReactiveFormsModule, FormsModule],
   templateUrl: './filters-panel.component.html',
   styleUrl: './filters-panel.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FiltersPanelComponent {
+export class FiltersPanelComponent implements OnInit {
   private readonly dataService = inject(DataService);
+  private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
-  issueDateFrom: string | null = null;
-  issueDateTo: string | null = null;
-  returnDateFrom: string | null = null;
-  returnDateTo: string | null = null;
-  overdueOnly = false;
+  filterForm: FormGroup = this.fb.group({
+    issueDateFrom: [null],
+    issueDateTo: [null],
+    returnDateFrom: [null],
+    returnDateTo: [null],
+    overdueOnly: [false],
+  });
 
-  onIssueDateFromChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.issueDateFrom = input.value;
-    this.applyFilters();
+  ngOnInit(): void {
+    this.filterForm.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(
+          (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
+        ),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((formValues) => {
+        this.applyFilters(formValues);
+      });
   }
 
-  onIssueDateToChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.issueDateTo = input.value;
-    this.applyFilters();
-  }
-
-  onReturnDateFromChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.returnDateFrom = input.value;
-    this.applyFilters();
-  }
-
-  onReturnDateToChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.returnDateTo = input.value;
-    this.applyFilters();
-  }
-
-  private applyFilters() {
+  private applyFilters(formValues: any): void {
     const filterUpdate: ClientFilters = {
-      overdueOnly: this.overdueOnly ? true : undefined,
+      overdueOnly: formValues.overdueOnly ? true : undefined,
+      issueDateFrom: formValues.issueDateFrom
+        ? new Date(formValues.issueDateFrom)
+        : undefined,
+      issueDateTo: formValues.issueDateTo
+        ? new Date(formValues.issueDateTo)
+        : undefined,
+      returnDateFrom: formValues.returnDateFrom
+        ? new Date(formValues.returnDateFrom)
+        : undefined,
+      returnDateTo: formValues.returnDateTo
+        ? new Date(formValues.returnDateTo)
+        : undefined,
     };
 
-    filterUpdate.issueDateFrom = this.issueDateFrom
-      ? new Date(this.issueDateFrom)
-      : undefined;
-    filterUpdate.issueDateTo = this.issueDateTo
-      ? new Date(this.issueDateTo)
-      : undefined;
-    filterUpdate.returnDateFrom = this.returnDateFrom
-      ? new Date(this.returnDateFrom)
-      : undefined;
-    filterUpdate.returnDateTo = this.returnDateTo
-      ? new Date(this.returnDateTo)
-      : undefined;
-
-    this.dataService.updateFilters(filterUpdate);
-  }
-
-  onOverdueLoansToggle(event: Event) {
-    const checkbox = event.target as HTMLInputElement;
-    const filterUpdate: ClientFilters = {
-      overdueOnly: checkbox.checked ? true : undefined,
-    };
     this.dataService.updateFilters(filterUpdate);
   }
 }

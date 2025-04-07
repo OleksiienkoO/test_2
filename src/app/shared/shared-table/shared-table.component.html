@@ -8,8 +8,8 @@
       </tr>
     </thead>
     <tbody>
-      @for(item of tableData() | paginate: { itemsPerPage: itemsPerPage,
-      currentPage: currentPage, id: 'tableData' };track
+      @for(item of tableData() | paginate: { itemsPerPage: itemsPerPage(),
+      currentPage: currentPage(), id: 'tableData' };track
       item[tableHeaders()[0].key]){
       <tr>
         @for(header of tableHeaders();track header.key){ @if(typeof
@@ -33,7 +33,7 @@
     />
     <pagination-controls
       id="tableData"
-      (pageChange)="currentPage = $event"
+      (pageChange)="currentPage.set($event)"
       previousLabel="Previous"
       nextLabel="Next"
       screenReaderPaginationLabel="Пагинация"

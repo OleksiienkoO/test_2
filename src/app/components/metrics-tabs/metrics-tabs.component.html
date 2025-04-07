@@ -1,0 +1,68 @@
+<ul class="nav nav-tabs mt-3" id="metricsTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      [class.active]="activeTab() === 'total-loans'"
+      id="total-loans-tab"
+      type="button"
+      (click)="onTabSelect('total-loans')"
+    >
+      <i class="fas fa-chart-bar"></i> Загальна кількість кредитів
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      [class.active]="activeTab() === 'average-amount'"
+      id="average-amount-tab"
+      type="button"
+      (click)="onTabSelect('average-amount')"
+    >
+      <i class="fas fa-dollar-sign"></i> Середня сума видачі
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      [class.active]="activeTab() === 'total-amount'"
+      id="total-amount-tab"
+      type="button"
+      (click)="onTabSelect('total-amount')"
+    >
+      <i class="fas fa-money-bill-wave"></i> Загальна сума видачі
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      [class.active]="activeTab() === 'total-percent'"
+      id="total-percent-tab"
+      type="button"
+      (click)="onTabSelect('total-percent')"
+    >
+      <i class="fas fa-percentage"></i> Загальна сума відсотків
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      [class.active]="activeTab() === 'returned-loans'"
+      id="returned-loans-tab"
+      type="button"
+      (click)="onTabSelect('returned-loans')"
+    >
+      <i class="fas fa-check-circle"></i> Повернені кредити
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      [class.active]="activeTab() === 'top'"
+      id="top-tab"
+      type="button"
+      (click)="onTabSelect('top')"
+    >
+      <i class="fas fa-trophy"></i> Топ-10
+    </button>
+  </li>
+</ul>
